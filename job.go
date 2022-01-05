@@ -4,16 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-
-	"github.com/google/uuid"
 )
 
 // Job is a job that will be scheduled.
 type Job struct {
-	ID                uuid.UUID              `json:"id,omitempty"`
+	ID                string                 `json:"id,omitempty"`
 	Name              string                 `json:"name"`
 	Metric            string                 `json:"metric"`
-	Description       *string                `json:"description"`
+	Description       string                 `json:"description"`
 	GrafanaURL        string                 `json:"grafanaUrl"`
 	DatasourceID      uint                   `json:"datasourceId"`
 	DatasourceType    string                 `json:"datasourceType"`
@@ -44,15 +42,17 @@ func (c *Client) NewJob(ctx context.Context, job Job) (Job, error) {
 	if err != nil {
 		return Job{}, err
 	}
-
-	return result.Data, err
+	return result.Data, nil
 }
 
 // Job fetches an existing machine learning job.
-func (c *Client) Job(ctx context.Context, id uuid.UUID) (Job, error) {
+func (c *Client) Job(ctx context.Context, id string) (Job, error) {
 	result := jobResponseWrapper{}
-	err := c.request(ctx, "GET", "/manage/api/v1/jobs/"+id.String(), nil, nil, &result)
-	return result.Data, err
+	err := c.request(ctx, "GET", "/manage/api/v1/jobs/"+id, nil, nil, &result)
+	if err != nil {
+		return Job{}, err
+	}
+	return result.Data, nil
 }
 
 // UpdateJob updates a machine learning job. A new training will be scheduled as part of updating.
@@ -63,11 +63,14 @@ func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
 	}
 
 	result := jobResponseWrapper{}
-	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+job.ID.String(), nil, bytes.NewBuffer(data), &result)
-	return result.Data, err
+	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+job.ID, nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return Job{}, err
+	}
+	return result.Data, nil
 }
 
 // DeleteJob deletes a machine learning job.
-func (c *Client) DeleteJob(ctx context.Context, id uuid.UUID) error {
-	return c.request(ctx, "DELETE", "/manage/api/v1/jobs/"+id.String(), nil, nil, nil)
+func (c *Client) DeleteJob(ctx context.Context, id string) error {
+	return c.request(ctx, "DELETE", "/manage/api/v1/jobs/"+id, nil, nil, nil)
 }

@@ -7,13 +7,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewJob(t *testing.T) {
-	id := uuid.New()
+	id := "8b154ff8-3d64-4b79-8b26-02b4baeb44e4"
 	job := Job{}
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "POST" {
@@ -68,7 +67,7 @@ func TestJob(t *testing.T) {
 	require.NoError(t, err)
 	ctx := context.Background()
 
-	id := uuid.MustParse("8b154ff8-3d64-4b79-8b26-02b4baeb44e4")
+	id := "8b154ff8-3d64-4b79-8b26-02b4baeb44e4"
 	job, err := c.Job(ctx, id)
 	require.NoError(t, err)
 	assert.Equal(t, id, job.ID)
@@ -79,7 +78,7 @@ func TestJob(t *testing.T) {
 }
 
 func TestUpdateJob(t *testing.T) {
-	id := uuid.New()
+	id := "8b154ff8-3d64-4b79-8b26-02b4baeb44e4"
 	job := Job{
 		ID: id,
 	}
@@ -88,7 +87,7 @@ func TestUpdateJob(t *testing.T) {
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-		if r.URL.Path != "/manage/api/v1/jobs/"+id.String() {
+		if r.URL.Path != "/manage/api/v1/jobs/"+id {
 			http.Error(w, "not found", http.StatusNotFound)
 			return
 		}
@@ -134,6 +133,6 @@ func TestDeleteJob(t *testing.T) {
 	require.NoError(t, err)
 	ctx := context.Background()
 
-	err = c.DeleteJob(ctx, uuid.MustParse("8b154ff8-3d64-4b79-8b26-02b4baeb44e4"))
+	err = c.DeleteJob(ctx, "8b154ff8-3d64-4b79-8b26-02b4baeb44e4")
 	require.NoError(t, err)
 }
