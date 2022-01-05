@@ -14,7 +14,8 @@ import (
 
 func TestRequest(t *testing.T) {
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("OK"))
+		_, err := w.Write([]byte("OK"))
+		require.NoError(t, err)
 	}))
 	defer s.Close()
 
@@ -36,7 +37,8 @@ func TestBasicAuth(t *testing.T) {
 			http.Error(w, "bad password", http.StatusUnauthorized)
 			return
 		}
-		w.Write([]byte("OK"))
+		_, err := w.Write([]byte("OK"))
+		require.NoError(t, err)
 	}))
 	defer s.Close()
 
@@ -56,7 +58,8 @@ func TestBearerAuth(t *testing.T) {
 			http.Error(w, "bad authorization header", http.StatusUnauthorized)
 			return
 		}
-		w.Write([]byte("OK"))
+		_, err := w.Write([]byte("OK"))
+		require.NoError(t, err)
 	}))
 	defer s.Close()
 
@@ -101,7 +104,8 @@ func TestRetries(t *testing.T) {
 			http.Error(w, "failure!", http.StatusInternalServerError)
 			return
 		}
-		w.Write([]byte("OK"))
+		_, err := w.Write([]byte("OK"))
+		require.NoError(t, err)
 	}))
 	defer s.Close()
 	c, err := New(s.URL, Config{
