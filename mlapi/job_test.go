@@ -98,8 +98,12 @@ func TestUpdateJob(t *testing.T) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		assert.Equal(t, job, parsedJob)
+		if parsedJob.ID != "" {
+			http.Error(w, "id should be empty when updating", http.StatusBadRequest)
+			return
+		}
 		parsedJob.ID = id
+		assert.Equal(t, job, parsedJob)
 		enc := json.NewEncoder(w)
 		_ = enc.Encode(jobResponseWrapper{Data: parsedJob})
 	}))

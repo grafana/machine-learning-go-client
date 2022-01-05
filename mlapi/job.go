@@ -57,13 +57,16 @@ func (c *Client) Job(ctx context.Context, id string) (Job, error) {
 
 // UpdateJob updates a machine learning job. A new training will be scheduled as part of updating.
 func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
+	id := job.ID
+	// Clear the ID before sending otherwise validation fails.
+	job.ID = ""
 	data, err := json.Marshal(job)
 	if err != nil {
 		return Job{}, err
 	}
 
 	result := jobResponseWrapper{}
-	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+job.ID, nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+id, nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return Job{}, err
 	}
