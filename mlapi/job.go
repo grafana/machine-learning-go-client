@@ -8,19 +8,38 @@ import (
 
 // Job is a job that will be scheduled.
 type Job struct {
-	ID                string                 `json:"id,omitempty"`
-	Name              string                 `json:"name"`
-	Metric            string                 `json:"metric"`
-	Description       string                 `json:"description"`
-	GrafanaURL        string                 `json:"grafanaUrl"`
-	DatasourceID      uint                   `json:"datasourceId"`
-	DatasourceType    string                 `json:"datasourceType"`
-	QueryParams       map[string]interface{} `json:"queryParams"`
-	Interval          uint                   `json:"interval"`
-	Algorithm         string                 `json:"algorithm"`
-	HyperParams       map[string]interface{} `json:"hyperParams"`
-	TrainingWindow    uint                   `json:"trainingWindow"`
-	TrainingFrequency uint                   `json:"trainingFrequency"`
+	ID string `json:"id,omitempty"`
+	// Name is a human readable name for the job.
+	Name string `json:"name"`
+	// Metric is the metric name used to query the job. Must match Prometheus
+	// naming requirements:
+	// https://prometheus.io/docs/concepts/data_model/#metric-names-and-labels.
+	Metric      string `json:"metric"`
+	Description string `json:"description"`
+
+	// GrafanaURL is the full URL to the Grafana instance. For example,
+	// https://myinstance.grafana.net/.
+	GrafanaURL string `json:"grafanaUrl"`
+	// DatasourceID is the numeric ID of the datasource to query when training
+	// data.
+	DatasourceID   uint                   `json:"datasourceId"`
+	DatasourceType string                 `json:"datasourceType"`
+	QueryParams    map[string]interface{} `json:"queryParams"`
+	// Interval is the data resolution in seconds.
+	Interval uint `json:"interval"`
+	// TrainingWindow is the lookback window to train on in seconds.
+	TrainingWindow uint `json:"trainingWindow"`
+	// TrainingFrequency is how often to re-train a model in seconds.
+	TrainingFrequency uint `json:"trainingFrequency"`
+
+	// Algorithm is the algorithm to use for machine learning.
+	// https://grafana.com/docs/grafana-cloud/machine-learning/models/ contains
+	// information on all supported algorithms.
+	Algorithm string `json:"algorithm"`
+	// HyperParams are the hyperparameters that can be specified. See
+	// https://grafana.com/docs/grafana-cloud/machine-learning/models/ for the
+	// various hyperparameters that can be changed.
+	HyperParams map[string]interface{} `json:"hyperParams"`
 }
 
 type jobResponseWrapper struct {
