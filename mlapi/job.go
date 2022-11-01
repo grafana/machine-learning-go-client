@@ -22,7 +22,10 @@ type Job struct {
 	GrafanaURL string `json:"grafanaUrl"`
 	// DatasourceID is the numeric ID of the datasource to query when training
 	// data.
-	DatasourceID   uint                   `json:"datasourceId"`
+	DatasourceID uint `json:"datasourceId"`
+	// DatasourceUID is the string UID of the datasource to query when training
+	// data.
+	DatasourceUID  string                 `json:"datasourceUid"`
 	DatasourceType string                 `json:"datasourceType"`
 	QueryParams    map[string]interface{} `json:"queryParams"`
 	// Interval is the data resolution in seconds.
