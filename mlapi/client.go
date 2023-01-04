@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
@@ -88,7 +87,7 @@ func (c *Client) request(ctx context.Context, method, requestPath string, query 
 		defer resp.Body.Close()
 
 		// read the body (even on non-successful HTTP status codes), as that's what the unit tests expect
-		bodyContents, err = ioutil.ReadAll(resp.Body)
+		bodyContents, err = io.ReadAll(resp.Body)
 
 		// if there was an error reading the body, try again
 		if err != nil {

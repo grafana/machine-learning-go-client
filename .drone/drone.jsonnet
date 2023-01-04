@@ -22,7 +22,7 @@ local pipeline(name, steps=[]) = {
   pipeline('Lint', steps=[
     step('lint',
          ['golangci-lint run'],
-         'golangci/golangci-lint:v1.37.1'),
+         'golangci/golangci-lint:v1.50.1'),
   ]),
   pipeline('Test', steps=[
     step('test', ['go test -cover -v ./...']),
