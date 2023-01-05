@@ -57,7 +57,7 @@ func TestJob(t *testing.T) {
 			return
 		}
 		_, err := w.Write([]byte(
-			`{"status":"success","data":{"id":"8b154ff8-3d64-4b79-8b26-02b4baeb44e4","created":"2022-01-05T15:48:48.647Z","modified":"2022-01-05T15:48:48.647Z","createdBy":"a_user","modifiedBy":null,"name":"Test Job","metric":"test_job","description":"","grafanaUrl":"http://localhost:3000/","grafanaApiKey":"\u003credacted\u003e","datasourceId":10,"datasourceUid":"abcd1234","datasourceType":"prometheus","queryParams":{"exemplar":true,"expr":"sum(up)","interval":"","legendFormat":"","refId":"A"},"interval":300,"algorithm":"grafana_prophet_1_0_1","hyperParams":{"changepoint_prior_scale":0.05,"growth":"linear","holidays_prior_scale":10,"interval_width":0.95,"seasonality_mode":"additive","seasonality_prior_scale":10},"trainingWindow":7776000,"trainingFrequency":86400,"status":"pending","nextTrainingAt":"2022-01-05T15:48:48.638971435Z","trainingScheduledAt":null,"trainingCompletedAt":null,"lastTrainingStatus":null,"trainingResult":"Pending","trainingFailures":0}}`,
+			`{"status":"success","data":{"id":"8b154ff8-3d64-4b79-8b26-02b4baeb44e4","created":"2022-01-05T15:48:48.647Z","modified":"2022-01-05T15:48:48.647Z","createdBy":"a_user","modifiedBy":null,"name":"Test Job","metric":"test_job","description":"","grafanaUrl":"http://localhost:3000/","grafanaApiKey":"\u003credacted\u003e","datasourceId":10,"datasourceUid":"abcd1234","datasourceType":"prometheus","queryParams":{"exemplar":true,"expr":"sum(up)","interval":"","legendFormat":"","refId":"A"},"interval":300,"algorithm":"grafana_prophet_1_0_1","hyperParams":{"changepoint_prior_scale":0.05,"growth":"linear","holidays_prior_scale":10,"interval_width":0.95,"seasonality_mode":"additive","seasonality_prior_scale":10},"trainingWindow":7776000,"trainingFrequency":86400,"status":"pending","nextTrainingAt":"2022-01-05T15:48:48.638971435Z","trainingScheduledAt":null,"trainingCompletedAt":null,"lastTrainingStatus":null,"trainingResult":"Pending","trainingFailures":0,"holidays":[]}}`,
 		))
 		require.NoError(t, err)
 	}))
@@ -139,4 +139,31 @@ func TestDeleteJob(t *testing.T) {
 
 	err = c.DeleteJob(ctx, "8b154ff8-3d64-4b79-8b26-02b4baeb44e4")
 	require.NoError(t, err)
+}
+
+func TestLinkHolidaysToJob(t *testing.T) {
+	id := "8b154ff8-3d64-4b79-8b26-02b4baeb44e4"
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "PUT" {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		if r.URL.Path != "/manage/api/v1/jobs/8b154ff8-3d64-4b79-8b26-02b4baeb44e4/holidays" {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		_, err := w.Write([]byte(
+			`{"status":"success","data":{"id":"8b154ff8-3d64-4b79-8b26-02b4baeb44e4","created":"2022-01-05T15:48:48.647Z","modified":"2022-01-05T15:48:48.647Z","createdBy":"a_user","modifiedBy":null,"name":"Test Job","metric":"test_job","description":"","grafanaUrl":"http://localhost:3000/","grafanaApiKey":"\u003credacted\u003e","datasourceId":10,"datasourceUid":"abcd1234","datasourceType":"prometheus","queryParams":{"exemplar":true,"expr":"sum(up)","interval":"","legendFormat":"","refId":"A"},"interval":300,"algorithm":"grafana_prophet_1_0_1","hyperParams":{"changepoint_prior_scale":0.05,"growth":"linear","holidays_prior_scale":10,"interval_width":0.95,"seasonality_mode":"additive","seasonality_prior_scale":10},"trainingWindow":7776000,"trainingFrequency":86400,"status":"pending","nextTrainingAt":"2022-01-05T15:48:48.638971435Z","trainingScheduledAt":null,"trainingCompletedAt":null,"lastTrainingStatus":null,"trainingResult":"Pending","trainingFailures":0,"holidays":["6d2d261c-7efc-4106-832c-751ba4bda77e"]}}`,
+		))
+		require.NoError(t, err)
+	}))
+	defer s.Close()
+
+	c, err := New(s.URL, Config{})
+	require.NoError(t, err)
+	ctx := context.Background()
+
+	returnedJob, err := c.LinkHolidaysToJob(ctx, id, []string{"Test Holiday"})
+	require.NoError(t, err)
+	assert.Equal(t, returnedJob.Holidays, []string{"6d2d261c-7efc-4106-832c-751ba4bda77e"})
 }

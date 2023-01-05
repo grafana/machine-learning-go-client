@@ -43,6 +43,10 @@ type Job struct {
 	// https://grafana.com/docs/grafana-cloud/machine-learning/models/ for the
 	// various hyperparameters that can be changed.
 	HyperParams map[string]interface{} `json:"hyperParams"`
+
+	// Holidays is a slice of IDs or names of Holidays to be linked to this job.
+	// Requests may specify either IDs or names. Responses will always contain IDs.
+	Holidays []string `json:"holidays"`
 }
 
 type jobResponseWrapper struct {
@@ -98,4 +102,24 @@ func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
 // DeleteJob deletes a machine learning job.
 func (c *Client) DeleteJob(ctx context.Context, id string) error {
 	return c.request(ctx, "DELETE", "/manage/api/v1/jobs/"+id, nil, nil, nil)
+}
+
+// LinkHolidaysToJob links a job to a set of holidays.
+// Only the ID and Holidays fields of the Job struct are used.
+func (c *Client) LinkHolidaysToJob(ctx context.Context, jobID string, holidayIDs []string) (Job, error) {
+	job := Job{
+		Holidays: holidayIDs,
+	}
+
+	data, err := json.Marshal(job)
+	if err != nil {
+		return Job{}, err
+	}
+
+	result := jobResponseWrapper{}
+	err = c.request(ctx, "PUT", "/manage/api/v1/jobs/"+jobID+"/holidays", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return Job{}, err
+	}
+	return result.Data, err
 }
