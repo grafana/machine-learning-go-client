@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"time"
+
+	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
 // Job is a job that will be scheduled.
@@ -72,6 +75,23 @@ func (c *Client) NewJob(ctx context.Context, job Job) (Job, error) {
 	return result.Data, nil
 }
 
+type jobsResponseWrapper struct {
+	Status   string   `json:"status"`
+	Data     []Job    `json:"data"`
+	Warnings []string `json:"warnings"`
+	Error    string   `json:"error"`
+}
+
+// Jobs fetches all existing machine learning jobs.
+func (c *Client) Jobs(ctx context.Context) ([]Job, error) {
+	result := jobsResponseWrapper{}
+	err := c.request(ctx, "GET", "/manage/api/v1/jobs", nil, nil, &result)
+	if err != nil {
+		return []Job{}, err
+	}
+	return result.Data, nil
+}
+
 // Job fetches an existing machine learning job.
 func (c *Client) Job(ctx context.Context, id string) (Job, error) {
 	result := jobResponseWrapper{}
@@ -123,4 +143,54 @@ func (c *Client) LinkHolidaysToJob(ctx context.Context, jobID string, holidayIDs
 		return Job{}, err
 	}
 	return result.Data, err
+}
+
+type forecastJobResponseWrapper struct {
+	Status string                    `json:"status"`
+	Data   backend.QueryDataResponse `json:"data"`
+}
+
+// ForecastParams are parameters used in an ephemeral job prediction.
+// Note this doesn't include `series` because users will not know
+// the hash of the training's series in advance. Instead we enforce
+// that ephemeral forecasts can only include a single series.
+type ForecastParams struct {
+	// Start is the start time of the forecast.
+	Start time.Time `json:"start"`
+	// End is the end time of the forecast.
+	End time.Time `json:"end"`
+	// Interval is the interval of the forecast.
+	Interval uint `json:"interval"`
+}
+
+// ForecastRequest is a request to run an ephemeral forecast.
+type ForecastRequest struct {
+	// Job is the specification of a job to run the forecast for.
+	Job Job `json:"job"`
+	// ForecastParams specify the start, end, and interval of the forecast.
+	ForecastParams ForecastParams `json:"forecastParams"`
+}
+
+// ForecastJob returns a forecast for a job definition and time range.
+//
+// This is a convenience API to avoid having to create a job, wait for it to train,
+// and then query the forecast. It is designed for exploratory usage rather than
+// to be called regularly; if you want to regularly query a forecast, create a job
+// and query it using the `grafanacloud-ml-metrics` datasource.
+// Jobs specified in the ForecastRequest must have a single series, or this
+// will return an error.
+// This function may be slow the first time it is called, but the result will be
+// cached for 24 hours after that.
+func (c *Client) ForecastJob(ctx context.Context, spec ForecastRequest) (backend.QueryDataResponse, error) {
+	data, err := json.Marshal(spec)
+	if err != nil {
+		return backend.QueryDataResponse{}, err
+	}
+
+	result := forecastJobResponseWrapper{}
+	err = c.request(ctx, "POST", "/predict/api/v1/forecast", nil, bytes.NewBuffer(data), &result)
+	if err != nil {
+		return backend.QueryDataResponse{}, err
+	}
+	return result.Data, nil
 }
