@@ -78,7 +78,7 @@ func (c *Client) OutlierDetector(ctx context.Context, id string) (OutlierDetecto
 	return result.Data, nil
 }
 
-// UpdateOutlierDetector updates a outlier detector. A new training will be scheduled as part of updating.
+// UpdateOutlierDetector updates an outlier detector.
 func (c *Client) UpdateOutlierDetector(ctx context.Context, outlier OutlierDetector) (OutlierDetector, error) {
 	id := outlier.ID
 	// Clear the ID before sending otherwise validation fails.
