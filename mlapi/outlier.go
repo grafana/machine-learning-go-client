@@ -96,7 +96,7 @@ func (c *Client) UpdateOutlierDetector(ctx context.Context, outlier OutlierDetec
 	return result.Data, nil
 }
 
-// DeleteOutlierDetector deletes outlier detector.
+// DeleteOutlierDetector deletes an outlier detector.
 func (c *Client) DeleteOutlierDetector(ctx context.Context, id string) error {
 	return c.request(ctx, "DELETE", "/manage/api/v1/outliers/"+id, nil, nil, nil)
 }
