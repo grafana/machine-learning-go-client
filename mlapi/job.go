@@ -27,6 +27,7 @@ type Job struct {
 	// data.
 	DatasourceUID  string                 `json:"datasourceUid"`
 	DatasourceType string                 `json:"datasourceType"`
+	CustomLabels   map[string]interface{} `json:"customLabels"`
 	QueryParams    map[string]interface{} `json:"queryParams"`
 	// Interval is the data resolution in seconds.
 	Interval uint `json:"interval"`
