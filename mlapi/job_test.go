@@ -57,7 +57,7 @@ func TestJob(t *testing.T) {
 			return
 		}
 		_, err := w.Write([]byte(
-			`{"status":"success","data":{"id":"8b154ff8-3d64-4b79-8b26-02b4baeb44e4","created":"2022-01-05T15:48:48.647Z","modified":"2022-01-05T15:48:48.647Z","createdBy":"a_user","modifiedBy":null,"name":"Test Job","metric":"test_job","description":"","grafanaUrl":"http://localhost:3000/","grafanaApiKey":"\u003credacted\u003e","datasourceId":10,"datasourceUid":"abcd1234","datasourceType":"prometheus","queryParams":{"exemplar":true,"expr":"sum(up)","interval":"","legendFormat":"","refId":"A"},"interval":300,"algorithm":"grafana_prophet_1_0_1","hyperParams":{"changepoint_prior_scale":0.05,"growth":"linear","holidays_prior_scale":10,"interval_width":0.95,"seasonality_mode":"additive","seasonality_prior_scale":10},"trainingWindow":7776000,"trainingFrequency":86400,"status":"pending","nextTrainingAt":"2022-01-05T15:48:48.638971435Z","trainingScheduledAt":null,"trainingCompletedAt":null,"lastTrainingStatus":null,"trainingResult":"Pending","trainingFailures":0,"holidays":[]}}`,
+			`{"status":"success","data":{"id":"8b154ff8-3d64-4b79-8b26-02b4baeb44e4","created":"2022-01-05T15:48:48.647Z","modified":"2022-01-05T15:48:48.647Z","createdBy":"a_user","modifiedBy":null,"name":"Test Job","metric":"test_job","description":"","grafanaUrl":"http://localhost:3000/","grafanaApiKey":"\u003credacted\u003e","datasourceId":10,"datasourceUid":"abcd1234","datasourceType":"prometheus","queryParams":{"exemplar":true,"expr":"sum(up)","interval":"","legendFormat":"","refId":"A"},"interval":300,"algorithm":"grafana_prophet_1_0_1","hyperParams":{"changepoint_prior_scale":0.05,"growth":"linear","holidays_prior_scale":10,"interval_width":0.95,"seasonality_mode":"additive","seasonality_prior_scale":10},"trainingWindow":7776000,"trainingFrequency":86400,"status":"pending","nextTrainingAt":"2022-01-05T15:48:48.638971435Z","trainingScheduledAt":null,"trainingCompletedAt":null,"lastTrainingStatus":null,"trainingResult":"Pending","trainingFailures":0,"holidays":[],"customLabels":{"test_label":"test_value"}}}`,
 		))
 		require.NoError(t, err)
 	}))
@@ -75,6 +75,8 @@ func TestJob(t *testing.T) {
 	assert.Equal(t, "test_job", job.Metric)
 	assert.NotEmpty(t, job.QueryParams)
 	assert.NotEmpty(t, job.HyperParams)
+	assert.NotEmpty(t, job.CustomLabels)
+	assert.Equal(t, "test_value", job.CustomLabels["test_label"])
 }
 
 func TestUpdateJob(t *testing.T) {
