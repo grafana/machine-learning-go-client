@@ -1,6 +1,6 @@
 module github.com/grafana/machine-learning-go-client
 
-go 1.17
+go 1.18
 
 require (
 	github.com/hashicorp/go-cleanhttp v0.5.2
