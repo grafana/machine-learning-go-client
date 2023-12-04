@@ -1,47 +1,33 @@
 ---
 kind: pipeline
-type: docker
 name: Lint
-
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: lint
-  image: golangci/golangci-lint:v1.37.1
-  commands:
+- commands:
   - golangci-lint run
-
+  image: golangci/golangci-lint:v1.50.1
+  name: lint
 trigger:
   ref:
   - refs/heads/main
   - refs/pull/**
   - refs/tags/**
-
+type: docker
 ---
 kind: pipeline
-type: docker
 name: Test
-
-platform:
-  os: linux
-  arch: amd64
-
 steps:
-- name: test
-  image: golang:1.17
-  commands:
+- commands:
   - go test -cover -v ./...
-
+  image: golang:1.18
+  name: test
 trigger:
   ref:
   - refs/heads/main
   - refs/pull/**
   - refs/tags/**
-
+type: docker
 ---
 kind: signature
-hmac: 466e0191372518bf314295d60cb28ddd7ba0f81657e418efac75a18f2863b231
+hmac: 83402b74ee3b8edcd02df7d3a1d1b2dcd51a2f480aca0072cfa76a7242feab32
 
 ...
