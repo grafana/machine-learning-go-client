@@ -76,6 +76,23 @@ func (c *Client) NewHoliday(ctx context.Context, holiday Holiday) (Holiday, erro
 	return result.Data, err
 }
 
+type holidaysResponseWrapper struct {
+	Status   string    `json:"status"`
+	Data     []Holiday `json:"data"`
+	Warnings []string  `json:"warnings"`
+	Error    string    `json:"error"`
+}
+
+// Holidays fetches all existing holidays.
+func (c *Client) Holidays(ctx context.Context) ([]Holiday, error) {
+	result := holidaysResponseWrapper{}
+	err := c.request(ctx, "GET", "/manage/api/v1/holidays", nil, nil, &result)
+	if err != nil {
+		return []Holiday{}, err
+	}
+	return result.Data, nil
+}
+
 // Holiday fetches an existing holiday.
 func (c *Client) Holiday(ctx context.Context, id string) (Holiday, error) {
 	result := holidayResponseWrapper{}
