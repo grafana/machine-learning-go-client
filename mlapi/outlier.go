@@ -75,7 +75,7 @@ type outlierDetectorsResponseWrapper struct {
 	Error    string            `json:"error"`
 }
 
-// Holidays fetches all existing outlier detectors.
+// OutlierDetectors fetches all existing outlier detectors.
 func (c *Client) OutlierDetectors(ctx context.Context) ([]OutlierDetector, error) {
 	result := outlierDetectorsResponseWrapper{}
 	err := c.request(ctx, "GET", "/manage/api/v1/outliers", nil, nil, &result)
