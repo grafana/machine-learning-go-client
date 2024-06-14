@@ -68,6 +68,23 @@ func (c *Client) NewOutlierDetector(ctx context.Context, outlier OutlierDetector
 	return result.Data, nil
 }
 
+type outlierDetectorsResponseWrapper struct {
+	Status   string            `json:"status"`
+	Data     []OutlierDetector `json:"data"`
+	Warnings []string          `json:"warnings"`
+	Error    string            `json:"error"`
+}
+
+// OutlierDetectors fetches all existing outlier detectors.
+func (c *Client) OutlierDetectors(ctx context.Context) ([]OutlierDetector, error) {
+	result := outlierDetectorsResponseWrapper{}
+	err := c.request(ctx, "GET", "/manage/api/v1/outliers", nil, nil, &result)
+	if err != nil {
+		return []OutlierDetector{}, err
+	}
+	return result.Data, nil
+}
+
 // OutlierDetector fetches an existing outlier detector.
 func (c *Client) OutlierDetector(ctx context.Context, id string) (OutlierDetector, error) {
 	result := outlierDetectorResponseWrapper{}
