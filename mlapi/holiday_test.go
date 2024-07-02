@@ -34,7 +34,7 @@ func TestNewHoliday(t *testing.T) {
 		assert.Equal(t, holiday, parsedHoliday)
 		parsedHoliday.ID = id
 		enc := json.NewEncoder(w)
-		_ = enc.Encode(holidayResponseWrapper{Data: parsedHoliday})
+		_ = enc.Encode(responseWrapper[Holiday]{Data: parsedHoliday})
 	}))
 	defer s.Close()
 
@@ -142,7 +142,7 @@ func TestUpdateHoliday(t *testing.T) {
 		parsedHoliday.ID = id
 		assert.Equal(t, holiday, parsedHoliday)
 		enc := json.NewEncoder(w)
-		_ = enc.Encode(holidayResponseWrapper{Data: parsedHoliday})
+		_ = enc.Encode(responseWrapper[Holiday]{Data: parsedHoliday})
 	}))
 	defer s.Close()
 

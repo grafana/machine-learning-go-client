@@ -53,13 +53,6 @@ type Job struct {
 	Holidays []string `json:"holidays"`
 }
 
-type jobResponseWrapper struct {
-	Status   string   `json:"status"`
-	Data     Job      `json:"data"`
-	Warnings []string `json:"warnings"`
-	Error    string   `json:"error"`
-}
-
 // NewJob creates a machine learning job and schedules a training.
 func (c *Client) NewJob(ctx context.Context, job Job) (Job, error) {
 	data, err := json.Marshal(job)
@@ -67,7 +60,7 @@ func (c *Client) NewJob(ctx context.Context, job Job) (Job, error) {
 		return Job{}, err
 	}
 
-	result := jobResponseWrapper{}
+	result := responseWrapper[Job]{}
 	err = c.request(ctx, "POST", "/manage/api/v1/jobs", nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return Job{}, err
@@ -75,16 +68,9 @@ func (c *Client) NewJob(ctx context.Context, job Job) (Job, error) {
 	return result.Data, nil
 }
 
-type jobsResponseWrapper struct {
-	Status   string   `json:"status"`
-	Data     []Job    `json:"data"`
-	Warnings []string `json:"warnings"`
-	Error    string   `json:"error"`
-}
-
 // Jobs fetches all existing machine learning jobs.
 func (c *Client) Jobs(ctx context.Context) ([]Job, error) {
-	result := jobsResponseWrapper{}
+	result := responseWrapper[[]Job]{}
 	err := c.request(ctx, "GET", "/manage/api/v1/jobs", nil, nil, &result)
 	if err != nil {
 		return []Job{}, err
@@ -94,7 +80,7 @@ func (c *Client) Jobs(ctx context.Context) ([]Job, error) {
 
 // Job fetches an existing machine learning job.
 func (c *Client) Job(ctx context.Context, id string) (Job, error) {
-	result := jobResponseWrapper{}
+	result := responseWrapper[Job]{}
 	err := c.request(ctx, "GET", "/manage/api/v1/jobs/"+id, nil, nil, &result)
 	if err != nil {
 		return Job{}, err
@@ -112,7 +98,7 @@ func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
 		return Job{}, err
 	}
 
-	result := jobResponseWrapper{}
+	result := responseWrapper[Job]{}
 	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+id, nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return Job{}, err
@@ -137,17 +123,12 @@ func (c *Client) LinkHolidaysToJob(ctx context.Context, jobID string, holidayIDs
 		return Job{}, err
 	}
 
-	result := jobResponseWrapper{}
+	result := responseWrapper[Job]{}
 	err = c.request(ctx, "PUT", "/manage/api/v1/jobs/"+jobID+"/holidays", nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return Job{}, err
 	}
 	return result.Data, err
-}
-
-type forecastJobResponseWrapper struct {
-	Status string                    `json:"status"`
-	Data   backend.QueryDataResponse `json:"data"`
 }
 
 // ForecastParams are parameters used in an ephemeral job prediction.
@@ -187,7 +168,7 @@ func (c *Client) ForecastJob(ctx context.Context, spec ForecastRequest) (backend
 		return backend.QueryDataResponse{}, err
 	}
 
-	result := forecastJobResponseWrapper{}
+	result := responseWrapper[backend.QueryDataResponse]{}
 	err = c.request(ctx, "POST", "/predict/api/v1/forecast", nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return backend.QueryDataResponse{}, err

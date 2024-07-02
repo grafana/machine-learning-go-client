@@ -13,6 +13,13 @@ import (
 	"github.com/hashicorp/go-cleanhttp"
 )
 
+type responseWrapper[T any] struct {
+	Status   string   `json:"status"`
+	Data     T        `json:"data"`
+	Warnings []string `json:"warnings"`
+	Error    string   `json:"error"`
+}
+
 // Client is a Grafana API client.
 type Client struct {
 	config  Config
@@ -55,7 +62,7 @@ func New(baseURL string, cfg Config) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) request(ctx context.Context, method, requestPath string, query url.Values, body io.Reader, responseStruct interface{}) error {
+func (c *Client) request(ctx context.Context, method, requestPath string, query url.Values, body io.Reader, responseStruct any) error {
 	var (
 		req          *http.Request
 		resp         *http.Response

@@ -33,7 +33,7 @@ func TestNewOutlierDetector(t *testing.T) {
 		assert.Equal(t, outlier, parsedOutlierDetector)
 		parsedOutlierDetector.ID = id
 		enc := json.NewEncoder(w)
-		_ = enc.Encode(outlierDetectorResponseWrapper{Data: parsedOutlierDetector})
+		_ = enc.Encode(responseWrapper[OutlierDetector]{Data: parsedOutlierDetector})
 	}))
 	defer s.Close()
 
@@ -105,7 +105,7 @@ func TestUpdateOutlierDetector(t *testing.T) {
 		parsedOutlierDetector.ID = id
 		assert.Equal(t, outlier, parsedOutlierDetector)
 		enc := json.NewEncoder(w)
-		_ = enc.Encode(outlierDetectorResponseWrapper{Data: parsedOutlierDetector})
+		_ = enc.Encode(responseWrapper[OutlierDetector]{Data: parsedOutlierDetector})
 	}))
 	defer s.Close()
 

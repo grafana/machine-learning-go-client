@@ -56,19 +56,13 @@ type CustomPeriod struct {
 	EndTime time.Time `json:"endTime"`
 }
 
-type holidayResponseWrapper struct {
-	Status string  `json:"status"`
-	Data   Holiday `json:"data"`
-	Error  string  `json:"error"`
-}
-
 // NewHoliday creates a new holiday.
 func (c *Client) NewHoliday(ctx context.Context, holiday Holiday) (Holiday, error) {
 	data, err := json.Marshal(holiday)
 	if err != nil {
 		return Holiday{}, err
 	}
-	result := holidayResponseWrapper{}
+	result := responseWrapper[Holiday]{}
 	err = c.request(ctx, "POST", "/manage/api/v1/holidays", nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return Holiday{}, err
@@ -76,16 +70,9 @@ func (c *Client) NewHoliday(ctx context.Context, holiday Holiday) (Holiday, erro
 	return result.Data, err
 }
 
-type holidaysResponseWrapper struct {
-	Status   string    `json:"status"`
-	Data     []Holiday `json:"data"`
-	Warnings []string  `json:"warnings"`
-	Error    string    `json:"error"`
-}
-
 // Holidays fetches all existing holidays.
 func (c *Client) Holidays(ctx context.Context) ([]Holiday, error) {
-	result := holidaysResponseWrapper{}
+	result := responseWrapper[[]Holiday]{}
 	err := c.request(ctx, "GET", "/manage/api/v1/holidays", nil, nil, &result)
 	if err != nil {
 		return []Holiday{}, err
@@ -95,7 +82,7 @@ func (c *Client) Holidays(ctx context.Context) ([]Holiday, error) {
 
 // Holiday fetches an existing holiday.
 func (c *Client) Holiday(ctx context.Context, id string) (Holiday, error) {
-	result := holidayResponseWrapper{}
+	result := responseWrapper[Holiday]{}
 	err := c.request(ctx, "GET", "/manage/api/v1/holidays/"+id, nil, nil, &result)
 	if err != nil {
 		return Holiday{}, err
@@ -113,7 +100,7 @@ func (c *Client) UpdateHoliday(ctx context.Context, holiday Holiday) (Holiday, e
 		return Holiday{}, err
 	}
 
-	result := holidayResponseWrapper{}
+	result := responseWrapper[Holiday]{}
 	err = c.request(ctx, "POST", "/manage/api/v1/holidays/"+id, nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return Holiday{}, err
