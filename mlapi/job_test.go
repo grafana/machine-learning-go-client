@@ -33,7 +33,7 @@ func TestNewJob(t *testing.T) {
 		assert.Equal(t, job, parsedJob)
 		parsedJob.ID = id
 		enc := json.NewEncoder(w)
-		_ = enc.Encode(jobResponseWrapper{Data: parsedJob})
+		_ = enc.Encode(responseWrapper[Job]{Data: parsedJob})
 	}))
 	defer s.Close()
 
@@ -107,7 +107,7 @@ func TestUpdateJob(t *testing.T) {
 		parsedJob.ID = id
 		assert.Equal(t, job, parsedJob)
 		enc := json.NewEncoder(w)
-		_ = enc.Encode(jobResponseWrapper{Data: parsedJob})
+		_ = enc.Encode(responseWrapper[Job]{Data: parsedJob})
 	}))
 	defer s.Close()
 

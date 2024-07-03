@@ -47,12 +47,6 @@ type OutlierDetector struct {
 	Algorithm OutlierAlgorithm `json:"algorithm"`
 }
 
-type outlierDetectorResponseWrapper struct {
-	Status string          `json:"status"`
-	Data   OutlierDetector `json:"data"`
-	Error  string          `json:"error"`
-}
-
 // NewOutlierDetector creates an outlier detector.
 func (c *Client) NewOutlierDetector(ctx context.Context, outlier OutlierDetector) (OutlierDetector, error) {
 	data, err := json.Marshal(outlier)
@@ -60,7 +54,7 @@ func (c *Client) NewOutlierDetector(ctx context.Context, outlier OutlierDetector
 		return OutlierDetector{}, err
 	}
 
-	result := outlierDetectorResponseWrapper{}
+	result := responseWrapper[OutlierDetector]{}
 	err = c.request(ctx, "POST", "/manage/api/v1/outliers", nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return OutlierDetector{}, err
@@ -68,16 +62,9 @@ func (c *Client) NewOutlierDetector(ctx context.Context, outlier OutlierDetector
 	return result.Data, nil
 }
 
-type outlierDetectorsResponseWrapper struct {
-	Status   string            `json:"status"`
-	Data     []OutlierDetector `json:"data"`
-	Warnings []string          `json:"warnings"`
-	Error    string            `json:"error"`
-}
-
 // OutlierDetectors fetches all existing outlier detectors.
 func (c *Client) OutlierDetectors(ctx context.Context) ([]OutlierDetector, error) {
-	result := outlierDetectorsResponseWrapper{}
+	result := responseWrapper[[]OutlierDetector]{}
 	err := c.request(ctx, "GET", "/manage/api/v1/outliers", nil, nil, &result)
 	if err != nil {
 		return []OutlierDetector{}, err
@@ -87,7 +74,7 @@ func (c *Client) OutlierDetectors(ctx context.Context) ([]OutlierDetector, error
 
 // OutlierDetector fetches an existing outlier detector.
 func (c *Client) OutlierDetector(ctx context.Context, id string) (OutlierDetector, error) {
-	result := outlierDetectorResponseWrapper{}
+	result := responseWrapper[OutlierDetector]{}
 	err := c.request(ctx, "GET", "/manage/api/v1/outliers/"+id, nil, nil, &result)
 	if err != nil {
 		return OutlierDetector{}, err
@@ -105,7 +92,7 @@ func (c *Client) UpdateOutlierDetector(ctx context.Context, outlier OutlierDetec
 		return OutlierDetector{}, err
 	}
 
-	result := outlierDetectorResponseWrapper{}
+	result := responseWrapper[OutlierDetector]{}
 	err = c.request(ctx, "POST", "/manage/api/v1/outliers/"+id, nil, bytes.NewBuffer(data), &result)
 	if err != nil {
 		return OutlierDetector{}, err
