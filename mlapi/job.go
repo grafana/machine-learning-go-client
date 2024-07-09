@@ -61,7 +61,7 @@ func (c *Client) NewJob(ctx context.Context, job Job) (Job, error) {
 	}
 
 	result := responseWrapper[Job]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/jobs", nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/manage/api/v1/jobs", nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Job{}, err
 	}
@@ -99,7 +99,7 @@ func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
 	}
 
 	result := responseWrapper[Job]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+id, nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+id, nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Job{}, err
 	}
@@ -124,7 +124,7 @@ func (c *Client) LinkHolidaysToJob(ctx context.Context, jobID string, holidayIDs
 	}
 
 	result := responseWrapper[Job]{}
-	err = c.request(ctx, "PUT", "/manage/api/v1/jobs/"+jobID+"/holidays", nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "PUT", "/manage/api/v1/jobs/"+jobID+"/holidays", nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Job{}, err
 	}
@@ -169,7 +169,7 @@ func (c *Client) ForecastJob(ctx context.Context, spec ForecastRequest) (backend
 	}
 
 	result := responseWrapper[backend.QueryDataResponse]{}
-	err = c.request(ctx, "POST", "/predict/api/v1/forecast", nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/predict/api/v1/forecast", nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return backend.QueryDataResponse{}, err
 	}

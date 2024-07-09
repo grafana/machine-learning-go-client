@@ -63,7 +63,7 @@ func (c *Client) NewHoliday(ctx context.Context, holiday Holiday) (Holiday, erro
 		return Holiday{}, err
 	}
 	result := responseWrapper[Holiday]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/holidays", nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/manage/api/v1/holidays", nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Holiday{}, err
 	}
@@ -101,7 +101,7 @@ func (c *Client) UpdateHoliday(ctx context.Context, holiday Holiday) (Holiday, e
 	}
 
 	result := responseWrapper[Holiday]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/holidays/"+id, nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/manage/api/v1/holidays/"+id, nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Holiday{}, err
 	}

@@ -55,7 +55,7 @@ func (c *Client) NewOutlierDetector(ctx context.Context, outlier OutlierDetector
 	}
 
 	result := responseWrapper[OutlierDetector]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/outliers", nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/manage/api/v1/outliers", nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return OutlierDetector{}, err
 	}
@@ -93,7 +93,7 @@ func (c *Client) UpdateOutlierDetector(ctx context.Context, outlier OutlierDetec
 	}
 
 	result := responseWrapper[OutlierDetector]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/outliers/"+id, nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", "/manage/api/v1/outliers/"+id, nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return OutlierDetector{}, err
 	}
