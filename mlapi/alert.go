@@ -97,7 +97,7 @@ func (c *Client) NewJobAlert(ctx context.Context, jobID string, alert Alert) (Al
 	}
 
 	result := responseWrapper[Alert]{}
-	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/jobs/%s/alerts", jobID), nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/jobs/%s/alerts", jobID), nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Alert{}, err
 	}
@@ -135,7 +135,7 @@ func (c *Client) UpdateJobAlert(ctx context.Context, jobID string, alert Alert) 
 	}
 
 	result := responseWrapper[Alert]{}
-	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/jobs/%s/alerts/%s", jobID, alertID), nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/jobs/%s/alerts/%s", jobID, alertID), nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Alert{}, err
 	}
@@ -155,7 +155,7 @@ func (c *Client) NewOutlierAlert(ctx context.Context, outlierID string, alert Al
 	}
 
 	result := responseWrapper[Alert]{}
-	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/outliers/%s/alerts", outlierID), nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/outliers/%s/alerts", outlierID), nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Alert{}, err
 	}
@@ -193,7 +193,7 @@ func (c *Client) UpdateOutlierAlert(ctx context.Context, outlierID string, alert
 	}
 
 	result := responseWrapper[Alert]{}
-	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/outliers/%s/alerts/%s", outlierID, alertID), nil, bytes.NewBuffer(data), &result)
+	err = c.request(ctx, "POST", fmt.Sprintf("/manage/api/v1/outliers/%s/alerts/%s", outlierID, alertID), nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Alert{}, err
 	}
