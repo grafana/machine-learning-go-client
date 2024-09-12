@@ -1,6 +1,7 @@
 package mlapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -70,9 +71,22 @@ func (c *Client) request(ctx context.Context, method, requestPath string, query 
 		bodyContents []byte
 	)
 
+	// read the request body and save it so we can use it in retries.
+	var reqBody []byte
+	if body != nil {
+		reqBody, err = io.ReadAll(body)
+		if err != nil {
+			return fmt.Errorf("failed to read request body: %w", err)
+		}
+	}
+
 	// retry logic
 	for n := 0; n <= c.config.NumRetries; n++ {
-		req, err = c.newRequest(ctx, method, requestPath, query, body)
+		var bodyReader io.Reader
+		if reqBody != nil {
+			bodyReader = bytes.NewReader(reqBody)
+		}
+		req, err = c.newRequest(ctx, method, requestPath, query, bodyReader)
 		if err != nil {
 			return err
 		}

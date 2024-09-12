@@ -1,8 +1,10 @@
 package mlapi
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -99,12 +101,16 @@ func TestFailures(t *testing.T) {
 func TestRetries(t *testing.T) {
 	i := 0
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Assert that the body was sent in every retried request.
+		body, err := io.ReadAll(r.Body)
+		require.NoError(t, err)
+		require.Equal(t, []byte("hello"), body)
 		if i == 0 {
 			i++
 			http.Error(w, "failure!", http.StatusInternalServerError)
 			return
 		}
-		_, err := w.Write([]byte("OK"))
+		_, err = w.Write([]byte("OK"))
 		require.NoError(t, err)
 	}))
 	defer s.Close()
@@ -113,6 +119,7 @@ func TestRetries(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	err = c.request(context.Background(), "GET", "/", nil, nil, nil)
+	reqBody := bytes.NewReader([]byte("hello"))
+	err = c.request(context.Background(), "GET", "/", nil, reqBody, nil)
 	assert.NoError(t, err)
 }
