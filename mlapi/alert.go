@@ -84,7 +84,7 @@ type Alert struct {
 	Annotations map[string]string `json:"annotations"`
 	// NoDataState allows alerting if no data is found in the query. Empty will
 	// default to OK to match Prometheus behavior.
-	NoDataState NoDataState `json:"noDataConditon"`
+	NoDataState NoDataState `json:"noDataCondition"`
 
 	SyncError string `json:"syncError,omitempty"`
 }
