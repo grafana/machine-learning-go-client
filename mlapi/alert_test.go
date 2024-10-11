@@ -63,7 +63,7 @@ func TestJobAlert(t *testing.T) {
 			return
 		}
 		_, err := w.Write([]byte(
-			`{"status":"success","data":{"id":"5218f38f-569b-448f-b81d-578173412195","created":"2024-07-02T16:19:39.992Z","modified":"2024-07-02T16:19:39.992Z","createdBy":null,"modifiedBy":null,"title":"test job alert","anomalyCondition":"any","for":"5m","window":"0s","labels":{"foo":"bar"},"annotations":{"description":"Anomaly detected","summary":"Anomaly detected"},"noDataConditon":""}}`,
+			`{"status":"success","data":{"id":"5218f38f-569b-448f-b81d-578173412195","created":"2024-07-02T16:19:39.992Z","modified":"2024-07-02T16:19:39.992Z","createdBy":null,"modifiedBy":null,"title":"test job alert","anomalyCondition":"any","for":"5m","window":"0s","labels":{"foo":"bar"},"annotations":{"description":"Anomaly detected","summary":"Anomaly detected"},"noDataCondition":""}}`,
 		))
 		require.NoError(t, err)
 	}))
@@ -204,7 +204,7 @@ func TestOutlierAlert(t *testing.T) {
 			return
 		}
 		_, err := w.Write([]byte(
-			`{"status":"success","data":{"id":"903a57c2-04cf-4a03-b4aa-54567e981ac0","created":"2024-07-02T19:04:56.604Z","modified":"2024-07-02T19:04:56.604Z","createdBy":null,"modifiedBy":null,"title":"test outlier alert","for":"5m","window":"1h","labels":{"foo":"bar"},"annotations":{"description":"Outlier detected","summary":"Outlier detected"},"noDataConditon":""}}`,
+			`{"status":"success","data":{"id":"903a57c2-04cf-4a03-b4aa-54567e981ac0","created":"2024-07-02T19:04:56.604Z","modified":"2024-07-02T19:04:56.604Z","createdBy":null,"modifiedBy":null,"title":"test outlier alert","for":"5m","window":"1h","labels":{"foo":"bar"},"annotations":{"description":"Outlier detected","summary":"Outlier detected"},"noDataCondition":""}}`,
 		))
 		require.NoError(t, err)
 	}))
