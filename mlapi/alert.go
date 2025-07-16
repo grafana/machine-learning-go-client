@@ -85,6 +85,11 @@ type Alert struct {
 	// NoDataState allows alerting if no data is found in the query. Empty will
 	// default to OK to match Prometheus behavior.
 	NoDataState NoDataState `json:"noDataCondition"`
+	// CustomQuery [Experimental] allows specifying a custom query to use for
+	// the alert. Alerts will still be triggered for values that are not zero,
+	// or in the case a threshold is defined, meeting the threshold. This field
+	// is experimental and may change or be removed at any time.
+	CustomQuery string `json:"customQuery"`
 
 	SyncError string `json:"syncError,omitempty"`
 }
