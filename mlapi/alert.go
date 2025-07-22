@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/grafana/grafana-openapi-client-go/models"
 	"github.com/prometheus/common/model"
 )
 
@@ -90,6 +91,10 @@ type Alert struct {
 	// or in the case a threshold is defined, meeting the threshold. This field
 	// is experimental and may change or be removed at any time.
 	CustomQuery string `json:"customQuery"`
+
+	// NotificationSettings are overrides to how notifications for an alert are
+	// specified. The field is passed to the alert without modification.
+	NotificationSettings *models.AlertRuleNotificationSettings `json:"notificationSettings"`
 
 	SyncError string `json:"syncError,omitempty"`
 }
