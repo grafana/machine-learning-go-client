@@ -105,6 +105,7 @@ func (c *Client) request(ctx context.Context, method, requestPath string, query 
 			continue
 		}
 
+		//nolint:errcheck // We can't do anything about not being able to close the body.
 		defer resp.Body.Close()
 
 		// read the body (even on non-successful HTTP status codes), as that's what the unit tests expect
