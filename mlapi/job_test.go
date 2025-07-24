@@ -46,6 +46,41 @@ func TestNewJob(t *testing.T) {
 	assert.Equal(t, id, returnedJob.ID)
 }
 
+func TestNewSystemJob(t *testing.T) {
+	id := "8b154ff8-3d64-4b79-8b26-02b4baeb44e4"
+	job := Job{}
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		if r.URL.Path != "/manage/api/v1/system-jobs" {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		parsedJob := Job{}
+		dec := json.NewDecoder(r.Body)
+		err := dec.Decode(&parsedJob)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		assert.Equal(t, job, parsedJob)
+		parsedJob.ID = id
+		enc := json.NewEncoder(w)
+		_ = enc.Encode(responseWrapper[Job]{Data: parsedJob})
+	}))
+	defer s.Close()
+
+	c, err := New(s.URL, Config{})
+	require.NoError(t, err)
+	ctx := context.Background()
+
+	returnedJob, err := c.NewSystemJob(ctx, job)
+	require.NoError(t, err)
+	assert.Equal(t, id, returnedJob.ID)
+}
+
 func TestJob(t *testing.T) {
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
@@ -120,6 +155,47 @@ func TestUpdateJob(t *testing.T) {
 	assert.Equal(t, job, returnedJob)
 }
 
+func TestUpdateSystemJob(t *testing.T) {
+	id := "8b154ff8-3d64-4b79-8b26-02b4baeb44e4"
+	job := Job{
+		ID: id,
+	}
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		if r.URL.Path != "/manage/api/v1/system-jobs/"+id {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		parsedJob := Job{}
+		dec := json.NewDecoder(r.Body)
+		err := dec.Decode(&parsedJob)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if parsedJob.ID != "" {
+			http.Error(w, "id should be empty when updating", http.StatusBadRequest)
+			return
+		}
+		parsedJob.ID = id
+		assert.Equal(t, job, parsedJob)
+		enc := json.NewEncoder(w)
+		_ = enc.Encode(responseWrapper[Job]{Data: parsedJob})
+	}))
+	defer s.Close()
+
+	c, err := New(s.URL, Config{})
+	require.NoError(t, err)
+	ctx := context.Background()
+
+	returnedJob, err := c.UpdateSystemJob(ctx, job)
+	require.NoError(t, err)
+	assert.Equal(t, job, returnedJob)
+}
+
 func TestDeleteJob(t *testing.T) {
 	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "DELETE" {
@@ -140,6 +216,29 @@ func TestDeleteJob(t *testing.T) {
 	ctx := context.Background()
 
 	err = c.DeleteJob(ctx, "8b154ff8-3d64-4b79-8b26-02b4baeb44e4")
+	require.NoError(t, err)
+}
+
+func TestDeleteSystemJob(t *testing.T) {
+	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "DELETE" {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		if r.URL.Path != "/manage/api/v1/system-jobs/8b154ff8-3d64-4b79-8b26-02b4baeb44e4" {
+			http.Error(w, "not found", http.StatusNotFound)
+			return
+		}
+		_, err := w.Write([]byte("successfully deleted"))
+		require.NoError(t, err)
+	}))
+	defer s.Close()
+
+	c, err := New(s.URL, Config{})
+	require.NoError(t, err)
+	ctx := context.Background()
+
+	err = c.DeleteSystemJob(ctx, "8b154ff8-3d64-4b79-8b26-02b4baeb44e4")
 	require.NoError(t, err)
 }
 

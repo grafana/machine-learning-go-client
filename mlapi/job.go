@@ -51,17 +51,30 @@ type Job struct {
 	// Holidays is a slice of IDs or names of Holidays to be linked to this job.
 	// Requests may specify either IDs or names. Responses will always contain IDs.
 	Holidays []string `json:"holidays"`
+
+	// ManagedBy is used to identify who controls system forecasts. It is
+	// required when creating system forecasts and must not be set otherwise.
+	ManagedBy string `json:"managedBy,omitempty"`
 }
 
 // NewJob creates a machine learning job and schedules a training.
 func (c *Client) NewJob(ctx context.Context, job Job) (Job, error) {
+	return c.newJob(ctx, job, "/manage/api/v1/jobs")
+}
+
+// NewSystemJob creates a system machine learning job and schedules a training.
+func (c *Client) NewSystemJob(ctx context.Context, job Job) (Job, error) {
+	return c.newJob(ctx, job, "/manage/api/v1/system-jobs")
+}
+
+func (c *Client) newJob(ctx context.Context, job Job, path string) (Job, error) {
 	data, err := json.Marshal(job)
 	if err != nil {
 		return Job{}, err
 	}
 
 	result := responseWrapper[Job]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/jobs", nil, bytes.NewReader(data), &result)
+	err = c.request(ctx, "POST", path, nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Job{}, err
 	}
@@ -90,6 +103,17 @@ func (c *Client) Job(ctx context.Context, id string) (Job, error) {
 
 // UpdateJob updates a machine learning job. A new training will be scheduled as part of updating.
 func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
+	return c.updateJob(ctx, job, "/manage/api/v1/jobs/")
+}
+
+// UpdateSystemJob updates a system machine learning job and schedules a new
+// training. It can also be used to change a user job into a system job if
+// necessary.
+func (c *Client) UpdateSystemJob(ctx context.Context, job Job) (Job, error) {
+	return c.updateJob(ctx, job, "/manage/api/v1/system-jobs/")
+}
+
+func (c *Client) updateJob(ctx context.Context, job Job, path string) (Job, error) {
 	id := job.ID
 	// Clear the ID before sending otherwise validation fails.
 	job.ID = ""
@@ -99,7 +123,7 @@ func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
 	}
 
 	result := responseWrapper[Job]{}
-	err = c.request(ctx, "POST", "/manage/api/v1/jobs/"+id, nil, bytes.NewReader(data), &result)
+	err = c.request(ctx, "POST", path+id, nil, bytes.NewReader(data), &result)
 	if err != nil {
 		return Job{}, err
 	}
@@ -109,6 +133,11 @@ func (c *Client) UpdateJob(ctx context.Context, job Job) (Job, error) {
 // DeleteJob deletes a machine learning job.
 func (c *Client) DeleteJob(ctx context.Context, id string) error {
 	return c.request(ctx, "DELETE", "/manage/api/v1/jobs/"+id, nil, nil, nil)
+}
+
+// DeleteJob deletes a system machine learning job.
+func (c *Client) DeleteSystemJob(ctx context.Context, id string) error {
+	return c.request(ctx, "DELETE", "/manage/api/v1/system-jobs/"+id, nil, nil, nil)
 }
 
 // LinkHolidaysToJob links a job to a set of holidays.
