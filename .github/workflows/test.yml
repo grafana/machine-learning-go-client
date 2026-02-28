@@ -21,7 +21,7 @@ jobs:
         with:
           go-version: 1.22
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@4afd733a84b1f43292c63897423277bb7f4313a9
+        uses: golangci/golangci-lint-action@b207e52793e67a85c21e5e0e8f6b42f0c634489b
         with:
           version: v2.3.0
           args: "--timeout=5m"
