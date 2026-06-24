@@ -88,7 +88,7 @@ require (
 	github.com/unknwon/log v0.0.0-20150304194804-e617c87089d3 // indirect
 	github.com/urfave/cli v1.22.15 // indirect
 	github.com/zeebo/xxh3 v1.0.2 // indirect
-	go.mongodb.org/mongo-driver v1.14.0 // indirect
+	go.mongodb.org/mongo-driver v1.17.7 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.53.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.53.0 // indirect
