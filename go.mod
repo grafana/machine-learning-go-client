@@ -1,8 +1,6 @@
 module github.com/grafana/machine-learning-go-client
 
-go 1.24.0
-
-toolchain go1.24.13
+go 1.26
 
 require (
 	github.com/hashicorp/go-cleanhttp v0.5.2
@@ -23,7 +21,7 @@ require (
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
-	github.com/chromedp/cdproto v0.0.0-20220208224320-6efb837e6bc2 // indirect
+	github.com/chromedp/cdproto v0.0.0-20260804232424-e85f50dbfd32 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/elazarl/goproxy v0.0.0-20230731152917-f99041a5c027 // indirect
