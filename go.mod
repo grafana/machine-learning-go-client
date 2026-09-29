@@ -11,7 +11,7 @@ require (
 
 require (
 	github.com/grafana/grafana-openapi-client-go v0.0.0-20250617151817-c0f8cbb88d5c
-	github.com/grafana/grafana-plugin-sdk-go v0.250.0
+	github.com/grafana/grafana-plugin-sdk-go v0.296.5
 	github.com/prometheus/common v0.55.0
 )
 
