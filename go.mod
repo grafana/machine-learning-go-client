@@ -1,8 +1,6 @@
 module github.com/grafana/machine-learning-go-client
 
-go 1.24.0
-
-toolchain go1.24.13
+go 1.25
 
 require (
 	github.com/hashicorp/go-cleanhttp v0.5.2
@@ -57,7 +55,7 @@ require (
 	github.com/hashicorp/yamux v0.1.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/klauspost/compress v1.20.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/magefile/mage v1.15.0 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
